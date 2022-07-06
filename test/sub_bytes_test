@@ -1,0 +1,31 @@
+IDIR = ../inc
+CC = gcc
+INCFLAGS = -I$(IDIR)
+
+ODIR = test_obj
+SDIR = ../src
+
+_DEPS = sub_bytes_layer.h						# modify it
+DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+
+SRC_OBJ_NAME = sub_bytes_layer.o				# modify it
+SRC_OBJ = $(patsubst %,$(ODIR)/%,$(SRC_OBJ_NAME))
+
+TEST_OBJ_NAME = sub_bytes_test.o test.o		# modify it
+TEST_OBJ = $(patsubst %,$(ODIR)/%,$(TEST_OBJ_NAME))
+
+OBJ = $(SRC_OBJ) $(TEST_OBJ)
+
+sub_bytes_test_exec : $(OBJ)					# modify it
+	$(CC) $(INCFLAGS) -o $@ $^ 
+
+$(SRC_OBJ) : $(ODIR)/%.o : $(SDIR)/%.c $(DEPS)
+	$(CC) $(INCFLAGS) -c -o $@ $<
+
+$(TEST_OBJ) : $(ODIR)/%.o : %.c $(DEPS)
+	$(CC) $(INCFLAGS) -c -o $@ $<
+
+.PHONY: clean
+
+clean:
+	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~
